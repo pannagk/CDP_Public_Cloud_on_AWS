@@ -80,9 +80,9 @@ vi setup_params.sh
    4. cdp_access_key_id="Enter the CDP access key id here"
    5. cdp_private_key="Enter the CDP private key here"
 
+NOTE: You can check the CDP region availability https://docs.cloudera.com/cdp-public-cloud/cloud/requirements-aws/topics/cdp-control-plane-regions.html[here]. 
 
 * Run the script with the below command. 
-
 [.shell]
 ----
 ./cdp_setup_on_aws.sh
