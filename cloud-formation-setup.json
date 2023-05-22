@@ -1,0 +1,1281 @@
+{
+    "Parameters": {
+        "StorageLocationBase": {
+            "Type": "String",
+            "Default": "my-bucket/my-data",
+            "Description": "The logging base path to create an S3 bucket with default encryption for CDP. By default CDP will create the optional subdirectory in the bucket. It is possible to either use the same bucket or different buckets for StorageLocationBase and LogsLocationBase."
+        },
+        "LogsLocationBase": {
+            "Type": "String",
+            "Default": "my-bucket/my-logs",
+            "Description": "The storage base path to create an S3 bucket with default encryption for CDP. By default CDP will create the optional subdirectory in the bucket. It is possible to either use the same bucket or different buckets for StorageLocationBase and LogsLocationBase."
+        },
+        "BackupLocationBase": {
+            "Type": "String",
+            "Default": "my-bucket/my-backups",
+            "Description": "The storage base path to create an S3 bucket with default encryption for CDP. By default CDP will create the optional subdirectory in the bucket. It is possible to either use the same bucket or different buckets for StorageLocationBase and LogsLocationBase."
+        },
+        "prefix": {
+            "Type": "String",
+            "Default": "replace-me",
+            "Description": "prefix for IAM objects, separated by a dash."
+        },
+        "s3KmsEncyption": {
+            "Type": "String",
+            "Default": "false",
+            "Description": "If set to True S3 will be configured with AWS managed KMS server side encryption"
+        },
+        "CrossAccountARN": {
+            "Type": "String",
+            "Default": "arn:aws:iam::<ACCT_ID>:role/<ROLE_NAME>",
+            "Description": "Required if s3 KMS Encryption is selected"
+        }
+    },
+    "Conditions": {
+        "kms": {
+            "Fn::Equals": [
+                {
+                    "Ref": "s3KmsEncyption"
+                },
+                "true"
+            ]
+        },
+        "needBucket2": {
+            "Fn::Not": [
+                {
+                    "Fn::Equals": [
+                        {
+                            "Fn::Select": [
+                                "0",
+                                {
+                                    "Fn::Split": [
+                                        "/",
+                                        {
+                                            "Ref": "LogsLocationBase"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "Fn::Select": [
+                                "0",
+                                {
+                                    "Fn::Split": [
+                                        "/",
+                                        {
+                                            "Ref": "StorageLocationBase"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "needBucket3": {
+            "Fn::Not": [
+                {
+                    "Fn::Or": [
+                        {
+                            "Fn::Equals": [
+                                {
+                                    "Fn::Select": [
+                                        "0",
+                                        {
+                                            "Fn::Split": [
+                                                "/",
+                                                {
+                                                    "Ref": "LogsLocationBase"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Select": [
+                                        "0",
+                                        {
+                                            "Fn::Split": [
+                                                "/",
+                                                {
+                                                    "Ref": "BackupLocationBase"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "Fn::Equals": [
+                                {
+                                    "Fn::Select": [
+                                        "0",
+                                        {
+                                            "Fn::Split": [
+                                                "/",
+                                                {
+                                                    "Ref": "StorageLocationBase"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "Fn::Select": [
+                                        "0",
+                                        {
+                                            "Fn::Split": [
+                                                "/",
+                                                {
+                                                    "Ref": "BackupLocationBase"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "Resources": {
+        "CDPS3Bucket1": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "Fn::If": [
+                                    "kms",
+                                    {
+                                        "SSEAlgorithm": "aws:kms",
+                                        "KMSMasterKeyID": {
+                                            "Ref": "CdpKey"
+                                        }
+                                    },
+                                    {
+                                        "SSEAlgorithm": "AES256"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "BucketName": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::Split": [
+                                "/",
+                                {
+                                    "Ref": "LogsLocationBase"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "PublicAccessBlockConfiguration": {
+                    "BlockPublicAcls": true,
+                    "BlockPublicPolicy": true,
+                    "IgnorePublicAcls": true,
+                    "RestrictPublicBuckets": true
+                }
+            }
+        },
+        "CDPS3Bucket2": {
+            "Type": "AWS::S3::Bucket",
+            "Condition": "needBucket2",
+            "Properties": {
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "Fn::If": [
+                                    "kms",
+                                    {
+                                        "SSEAlgorithm": "aws:kms",
+                                        "KMSMasterKeyID": {
+                                            "Ref": "CdpKey"
+                                        }
+                                    },
+                                    {
+                                        "SSEAlgorithm": "AES256"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "BucketName": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::Split": [
+                                "/",
+                                {
+                                    "Ref": "StorageLocationBase"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "PublicAccessBlockConfiguration": {
+                    "BlockPublicAcls": true,
+                    "BlockPublicPolicy": true,
+                    "IgnorePublicAcls": true,
+                    "RestrictPublicBuckets": true
+                }
+            }
+        },
+        "CDPS3Bucket3": {
+            "Type": "AWS::S3::Bucket",
+            "Condition": "needBucket3",
+            "Properties": {
+                "BucketEncryption": {
+                    "ServerSideEncryptionConfiguration": [
+                        {
+                            "ServerSideEncryptionByDefault": {
+                                "Fn::If": [
+                                    "kms",
+                                    {
+                                        "SSEAlgorithm": "aws:kms",
+                                        "KMSMasterKeyID": {
+                                            "Ref": "CdpKey"
+                                        }
+                                    },
+                                    {
+                                        "SSEAlgorithm": "AES256"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "BucketName": {
+                    "Fn::Select": [
+                        "0",
+                        {
+                            "Fn::Split": [
+                                "/",
+                                {
+                                    "Ref": "BackupLocationBase"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "PublicAccessBlockConfiguration": {
+                    "BlockPublicAcls": true,
+                    "BlockPublicPolicy": true,
+                    "IgnorePublicAcls": true,
+                    "RestrictPublicBuckets": true
+                }
+            }
+        },
+        "IDBrokerAssumeRolePolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "VisualEditor0",
+                            "Effect": "Allow",
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "idbroker-assume-role-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "BucketAccessPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:CreateJob",
+                                "s3:GetAccountPublicAccessBlock",
+                                "s3:HeadBucket",
+                                "s3:ListJobs"
+                            ],
+                            "Resource": "*"
+                        },
+                        {
+                            "Sid": "AllowListingOfDataLakeFolder",
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetAccelerateConfiguration",
+                                "s3:GetAnalyticsConfiguration",
+                                "s3:GetBucketAcl",
+                                "s3:GetBucketCORS",
+                                "s3:GetBucketLocation",
+                                "s3:GetBucketLogging",
+                                "s3:GetBucketNotification",
+                                "s3:GetBucketPolicy",
+                                "s3:GetBucketPolicyStatus",
+                                "s3:GetBucketPublicAccessBlock",
+                                "s3:GetBucketRequestPayment",
+                                "s3:GetBucketTagging",
+                                "s3:GetBucketVersioning",
+                                "s3:GetBucketWebsite",
+                                "s3:GetEncryptionConfiguration",
+                                "s3:GetInventoryConfiguration",
+                                "s3:GetLifecycleConfiguration",
+                                "s3:GetMetricsConfiguration",
+                                "s3:GetObject",
+                                "s3:GetObjectAcl",
+                                "s3:GetObjectTagging",
+                                "s3:GetObjectVersion",
+                                "s3:GetObjectVersionAcl",
+                                "s3:GetObjectVersionTagging",
+                                "s3:GetReplicationConfiguration",
+                                "s3:ListBucket",
+                                "s3:ListBucketMultipartUploads",
+                                "s3:ListMultipartUploadParts"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Fn::Select": [
+                                                    "0",
+                                                    {
+                                                        "Fn::Split": [
+                                                            "/",
+                                                            {
+                                                                "Ref": "StorageLocationBase"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Fn::Select": [
+                                                    "0",
+                                                    {
+                                                        "Fn::Split": [
+                                                            "/",
+                                                            {
+                                                                "Ref": "StorageLocationBase"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "bucket-access-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "LogPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Fn::Select": [
+                                                "0",
+                                                {
+                                                    "Fn::Split": [
+                                                        "/",
+                                                        {
+                                                            "Ref": "LogsLocationBase"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:AbortMultipartUpload",
+                                "s3:ListMultipartUploadParts",
+                                "s3:PutObject"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "LogsLocationBase"
+                                        },
+                                        "/*"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "log-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "BackupPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:AbortMultipartUpload",
+                                "s3:ListMultipartUploadParts",
+                                "s3:PutObject"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "BackupLocationBase"
+                                        },
+                                        "/*"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "backup-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "DLBackupPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:PutObject",
+                                "s3:GetObject",
+                                "s3:DeleteObject"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "BackupLocationBase"
+                                        },
+                                        "/*"
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "dlbackup-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "DLRestorePolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:ListBucket"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Fn::Select": [
+                                                    "0",
+                                                    {
+                                                        "Fn::Split": [
+                                                            "/",
+                                                            {
+                                                                "Ref": "BackupLocationBase"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Fn::Select": [
+                                                    "0",
+                                                    {
+                                                        "Fn::Split": [
+                                                            "/",
+                                                            {
+                                                                "Ref": "BackupLocationBase"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "dlrestore-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "RangerAuditS3Policy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "FullObjectAccessUnderAuditDir",
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Ref": "StorageLocationBase"
+                                        },
+                                        "/ranger/audit/*"
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "Sid": "LimitedAccessToDataLakeBucket",
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:AbortMultipartUpload",
+                                "s3:ListBucket",
+                                "s3:ListBucketMultipartUploads"
+                            ],
+                            "Resource": {
+                                "Fn::Join": [
+                                    "",
+                                    [
+                                        "arn:aws:s3:::",
+                                        {
+                                            "Fn::Select": [
+                                                "0",
+                                                {
+                                                    "Fn::Split": [
+                                                        "/",
+                                                        {
+                                                            "Ref": "StorageLocationBase"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "ranger-audit-s3-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "DatalakeAdminS3Policy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "VisualEditor3",
+                            "Effect": "Allow",
+                            "Action": [
+                                "s3:AbortMultipartUpload",
+                                "s3:DeleteObject",
+                                "s3:DeleteObjectVersion",
+                                "s3:GetAccelerateConfiguration",
+                                "s3:GetAnalyticsConfiguration",
+                                "s3:GetBucketAcl",
+                                "s3:GetBucketCORS",
+                                "s3:GetBucketLocation",
+                                "s3:GetBucketLogging",
+                                "s3:GetBucketNotification",
+                                "s3:GetBucketObjectLockConfiguration",
+                                "s3:GetBucketPolicy",
+                                "s3:GetBucketPolicyStatus",
+                                "s3:GetBucketPublicAccessBlock",
+                                "s3:GetBucketRequestPayment",
+                                "s3:GetBucketTagging",
+                                "s3:GetBucketVersioning",
+                                "s3:GetBucketWebsite",
+                                "s3:GetEncryptionConfiguration",
+                                "s3:GetInventoryConfiguration",
+                                "s3:GetLifecycleConfiguration",
+                                "s3:GetMetricsConfiguration",
+                                "s3:GetObject",
+                                "s3:GetObjectAcl",
+                                "s3:GetObjectLegalHold",
+                                "s3:GetObjectRetention",
+                                "s3:GetObjectTagging",
+                                "s3:GetObjectVersion",
+                                "s3:GetObjectVersionAcl",
+                                "s3:GetObjectVersionTagging",
+                                "s3:GetReplicationConfiguration",
+                                "s3:ListBucket",
+                                "s3:ListBucketMultipartUploads",
+                                "s3:ListBucketVersions",
+                                "s3:ListMultipartUploadParts",
+                                "s3:PutObject"
+                            ],
+                            "Resource": [
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "StorageLocationBase"
+                                            }
+                                        ]
+                                    ]
+                                },
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:s3:::",
+                                            {
+                                                "Ref": "StorageLocationBase"
+                                            },
+                                            "/*"
+                                        ]
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "datalake-admin-s3-policy"
+                        ]
+                    ]
+                }
+            }
+        },
+        "IDBrokerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Description": "allows cdp to assume roles",
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "IDBrokerAssumeRolePolicy"
+                    },
+                    {
+                        "Ref": "LogPolicy"
+                    }
+                ],
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "idbroker-role"
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "IDBrokerAssumeRolePolicy"
+        },
+        "LogRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Description": "used by CDP to write logs",
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "LogPolicy"
+                    },
+                    {
+                        "Ref": "BackupPolicy"
+                    },
+                    {
+                        "Ref": "DLRestorePolicy"
+                    }
+                ],
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "log-role"
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": [
+                "LogPolicy",
+                "BackupPolicy",
+                "DLRestorePolicy"
+            ]
+        },
+        "RangerAuditRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:iam::",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":role/",
+                                            {
+                                                "Ref": "IDBrokerRole"
+                                            }
+                                        ]
+                                    ]
+                                }
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Description": "Used by CDP to write ranger audits",
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "RangerAuditS3Policy"
+                    },
+                    {
+                        "Ref": "BucketAccessPolicy"
+                    },
+                    {
+                        "Ref": "DLRestorePolicy"
+                    },
+                    {
+                        "Ref": "DLBackupPolicy"
+                    }
+                ],
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "ranger-audit-role"
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": [
+                "IDBrokerRole",
+                "RangerAuditS3Policy",
+                "BucketAccessPolicy",
+                "DLBackupPolicy",
+                "DLRestorePolicy"
+            ]
+        },
+        "DatalakeAdminRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "arn:aws:iam::",
+                                            {
+                                                "Ref": "AWS::AccountId"
+                                            },
+                                            ":role/",
+                                            {
+                                                "Ref": "IDBrokerRole"
+                                            }
+                                        ]
+                                    ]
+                                }
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Description": "Map to Datalake Admin Group",
+                "ManagedPolicyArns": [
+                    {
+                        "Ref": "DatalakeAdminS3Policy"
+                    },
+                    {
+                        "Ref": "BucketAccessPolicy"
+                    },
+                    {
+                        "Ref": "DLRestorePolicy"
+                    },
+                    {
+                        "Ref": "DLBackupPolicy"
+                    }
+                ],
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "datalake-admin-role"
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": [
+                "IDBrokerRole",
+                "DatalakeAdminS3Policy",
+                "BucketAccessPolicy",
+                "DLRestorePolicy",
+                "DLBackupPolicy"
+            ]
+        },
+        "DataAccessInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "InstanceProfileName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "data-access-instance-profile"
+                        ]
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "IDBrokerRole"
+                    }
+                ]
+            },
+            "DependsOn": "IDBrokerRole"
+        },
+        "LogAccessInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "InstanceProfileName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            {
+                                "Ref": "prefix"
+                            },
+                            "log-access-instance-profile"
+                        ]
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "LogRole"
+                    }
+                ]
+            },
+            "DependsOn": "LogRole"
+        },
+        "AutoScalingSLR": {
+            "Condition": "kms",
+            "Type": "AWS::IAM::ServiceLinkedRole",
+            "Properties": {
+                "AWSServiceName": "autoscaling.amazonaws.com",
+                "Description": "Default Service-Linked Role enables access to AWS Services and Resources used or managed by Auto Scaling"
+            }
+        },
+        "CdpKey": {
+            "Condition": "kms",
+            "Type": "AWS::KMS::Key",
+            "Properties": {
+                "Description": "CDP KMS Key for use with S3",
+                "KeyPolicy": {
+                    "Version": "2012-10-17",
+                    "Id": "key-cdp-1",
+                    "Statement": [
+                        {
+                            "Sid": "Enable IAM User Permissions",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:root"
+                                }
+                            },
+                            "Action": "kms:*",
+                            "Resource": "*"
+                        },
+                        {
+                            "Sid": "Allow attachment of persistent resources",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": [
+                                    {
+                                        "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:root"
+                                    },
+                                    {
+                                        "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+                                    },
+                                    {
+                                        "Ref": "CrossAccountARN"
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "LogRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "RangerAuditRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "DatalakeAdminRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "IDBrokerRole",
+                                            "Arn"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "Action": [
+                                "kms:CreateGrant",
+                                "kms:ListGrants",
+                                "kms:RevokeGrant"
+                            ],
+                            "Resource": "*",
+                            "Condition": {
+                                "Bool": {"kms:GrantIsForAWSResource": "true"}
+                            }
+                        },
+                        {
+                            "Sid": "Allow use of the key",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": [
+                                    {
+                                        "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:root"
+                                    },
+                                    {
+                                        "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+                                    },
+                                    {
+                                        "Ref": "CrossAccountARN"
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "LogRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "RangerAuditRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "DatalakeAdminRole",
+                                            "Arn"
+                                        ]
+                                    },
+                                    {
+                                        "Fn::GetAtt": [
+                                            "IDBrokerRole",
+                                            "Arn"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "Action": [
+                                "kms:DescribeKey",
+                                "kms:Encrypt",
+                                "kms:Decrypt",
+                                "kms:ReEncrypt*",
+                                "kms:GenerateDataKey",
+                                "kms:GenerateDataKeyWithoutPlaintext"
+                            ],
+                            "Resource": "*"
+                        }
+                    ]
+                }
+            },
+            "DependsOn": [
+                "AutoScalingSLR",
+                "LogRole",
+                "RangerAuditRole",
+                "DatalakeAdminRole",
+                "IDBrokerRole"
+            ]
+        },
+        "CdpKeyAlias": {
+            "Condition": "kms",
+            "Type" : "AWS::KMS::Alias",
+            "Properties" : {
+                "AliasName" :{
+                    "Fn::Join": [
+                        "",
+                        [
+                            "alias/",
+                            {
+                                "Ref": "prefix"
+                            },
+                            "-kms-key"
+                        ]
+                    ]
+                },
+                "TargetKeyId" : {
+                    "Fn::GetAtt": [
+                        "CdpKey",
+                        "KeyId"
+                    ]
+                }
+              },
+            "DependsOn": "CdpKey"
+        } 
+    },
+    "Outputs": {
+        "LogInstanceProfile": {
+            "Description": "Log Instance Profile Name",
+            "Value": {
+                "Ref": "LogAccessInstanceProfile"
+            }
+        },
+        "LogsLocationBase": {
+            "Description": "S3 path for log directory",
+            "Value": {
+                "Ref": "LogsLocationBase"
+            }
+        },
+        "RangerAuditRole": {
+            "Description": "Ranger Audit Role Name",
+            "Value": {
+                "Ref": "RangerAuditRole"
+            }
+        },
+        "DataInstanceProfile": {
+            "Description": "Data Access Instance Profile Name",
+            "Value": {
+                "Ref": "DataAccessInstanceProfile"
+            }
+        },
+        "StorageLocationBase": {
+            "Description": "S3 path for data directory",
+            "Value": {
+                "Ref": "StorageLocationBase"
+            }
+        },
+        "BackupLocationBase": {
+            "Description": "S3 path for data directory",
+            "Value": {
+                "Ref": "BackupLocationBase"
+            }
+        },
+        "DataAccessRole": {
+            "Description": "Data Access Role Name",
+            "Value": {
+                "Ref": "DatalakeAdminRole"
+            }
+        },
+        "CdpKey": {
+            "Description": "Encryption key",
+            "Value": {
+                "Ref": "CdpKey"
+            },
+            "Condition": "kms"
+        },
+        "CrossAccountARN": {
+            "Description": "Cross-account role",
+            "Value": {
+                "Ref": "CrossAccountARN"
+            }
+        }
+    }
+}
