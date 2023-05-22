@@ -24,19 +24,9 @@ This document provides all the required information for Cloudera Partners to set
 
 ==== Access to the AWS account with administrator access.
 
-==== AWS region in which CDP Resources will be deployed.
-
 ==== AWS CLI
 
-Install Docker on your system and ensure that it is running. 
-
-===== https://docs.docker.com/desktop/install/mac-install/[Mac]
-
-===== https://docs.docker.com/desktop/install/windows-install/[Windows]
-
-==== SSH-key pair (Have the public key handy during the setup)
-
-You can create this from Azure with the steps mentioned https://learn.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal[here] or you can use the ssh-keygen utility. 
+===== https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html[AWS CLI Installation Steps]
 
 ==== CDP access key and private key
 
