@@ -1,1 +1,0 @@
-# CDP_Public_Cloud_on_AWS

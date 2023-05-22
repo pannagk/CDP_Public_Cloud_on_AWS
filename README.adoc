@@ -1,0 +1,58 @@
+= CDP Public Cloud Environment Setup on AWS
+
+Author: *Pannag Katti*
+
+:page-layout: docs
+:description: CDP Public Cloud on Azure
+:imagesdir: ./images
+:icons: font
+:toc:
+:toc-placement!:
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+
+toc::[]
+
+This document provides all the required information for Cloudera Partners to setup a CDP Environment on Public Cloud. In addition to exploring different Data Services that run on containerized environment, this setup can also be used for any solution validation, certification, getting a Hands-on experience, or for any demos with potential customers. Here, you will get all the details for a quick-setup of a CDP environment on CDP Public Cloud with *AWS* as the provider for all the cloud resources. 
+
+== Prerequisites
+
+==== Access to a CDP tenant with PowerUser access
+
+==== Access to the AWS account with administrator access.
+
+==== AWS region in which CDP Resources will be deployed.
+
+==== AWS CLI
+
+Install Docker on your system and ensure that it is running. 
+
+===== https://docs.docker.com/desktop/install/mac-install/[Mac]
+
+===== https://docs.docker.com/desktop/install/windows-install/[Windows]
+
+==== SSH-key pair (Have the public key handy during the setup)
+
+You can create this from Azure with the steps mentioned https://learn.microsoft.com/en-us/azure/virtual-machines/ssh-keys-portal[here] or you can use the ssh-keygen utility. 
+
+==== CDP access key and private key
+
+* On the CDP Portal, click at the left bottom corner and click on Profile as shown below. 
+
+image::profile.png[profile,180,200]
+
+image::profile_1.png[profile1,290,220]
+
+* Click on Generate Access Key as shown below. 
+
+image::gen_access_key.png[access_key,900,200]
+
+* Copy the values of Access Key ID and Secret Key separately. 
+
+image::gen_access_key_1.png[access_key1,450,300]
+
+== Machine Setup 
+
