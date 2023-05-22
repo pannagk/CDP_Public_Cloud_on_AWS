@@ -44,5 +44,47 @@ image::gen_access_key.png[access_key,900,200]
 
 image::gen_access_key_1.png[access_key1,450,300]
 
-== Machine Setup 
+== Steps
 
+* Ensure you have aws cli configured in your PATH. Run the below command to confirm the same. You should get the version details of aws-cli. 
+
+[.shell]
+----
+aws --version
+----
+
+* Clone this repository with the below command. 
+[.shell]
+----
+git clone https://github.com/pannagk/CDP_Public_Cloud_on_AWS.git
+----
+
+* Run the below commands. 
+[.shell]
+----
+cd CDP_Public_Cloud_on_AWS
+rm -rf images Readme.adoc
+chmod +x *.sh
+----
+
+* Open the file setup_params.sh and update all the values. 
+
+[.shell]
+----
+vi setup_params.sh
+----
+
+   1. prefix="Enter a simple lowercase & alphabet only prefix for identifying resources" (example:- cdppoc)   
+   2. aws_region="Enter a valid aws region in which CDP is also available"
+   3. cdp_run_time="Enter CDP Runtime version" (7.2.16 is the latest. You can check with your Cloudera POC to verify this. )
+   4. cdp_access_key_id="Enter the CDP access key id here"
+   5. cdp_private_key="Enter the CDP private key here"
+
+* Run the script with the below command. 
+
+[.shell]
+----
+./cdp_setup_on_aws.sh
+----
+
+* The setup script executes the required steps for creation of CDP Environment in a sequence and you can see the output for each step. You can keep monitoring the logs of the script. If you encounter any error, take the screenshot or copy the error message and share it with the Cloudera POC you are working with. 
