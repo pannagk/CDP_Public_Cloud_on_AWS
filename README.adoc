@@ -80,6 +80,7 @@ vi setup_params.sh
    4. cdp_access_key_id="Enter the CDP access key id here"
    5. cdp_private_key="Enter the CDP private key here"
 
+
 * Run the script with the below command. 
 
 [.shell]
