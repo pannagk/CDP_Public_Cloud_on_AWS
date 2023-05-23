@@ -194,7 +194,7 @@ do
     env_status=$(cdp environments describe-environment --environment-name ${cdp_env_name} | jq -r .environment.status)
     echo "$(date): The CDP environment status:- ${bold}${env_status}${normal}"
     printf "\n---------------------------------------------------------------------------------------------\n"
-    if [ "$env_status" = "FREEIPA_CREATION_IN_PROGRESS" ]
+    if [ "$env_status" = "FREEIPA_CREATION_IN_PROGRESS" ] || [ "$env_status" = "NETWORK_CREATION_IN_PROGRESS" ]
     then
         sleep 180
     elif [ "$env_status" = "AVAILABLE" ]
