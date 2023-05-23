@@ -33,14 +33,31 @@ echo "--------------------------------------------------------------------------
 printf "${bold}Creating IAM Role and attaching the previously created policy to this role.\n${normal}"
 echo "---------------------------------------------------------------------------------------------"
 
+COMMAND="aws iam create-role --role-name ${prefix}-role \
+--assume-role-policy-document file://${PWD}/aws_role_trusted_entity.json"
+
+echo $COMMAND
+
+printf "\n\n"
+
 aws iam create-role --role-name ${prefix}-role \
 --assume-role-policy-document file://${PWD}/aws_role_trusted_entity.json
+
+COMMAND="aws iam attach-role-policy \
+--role-name ${prefix}-role \
+--policy-arn ${iam_policy_arn}"
+
+echo $COMMAND
+
+printf "\n\n"
 
 aws iam attach-role-policy \
 --role-name ${prefix}-role \
 --policy-arn ${iam_policy_arn}
 
 iam_role_arn=$(aws iam get-role --role-name ${prefix}-role | jq -r .Role.Arn)
+
+printf "IAM_ROLE_ARN=${iam_role_arn}"
 
 
 ##---------------------------------------------------
@@ -64,6 +81,12 @@ printf "${bold}Creating CDP Credential.\n${normal}"
 echo "---------------------------------------------------------------------------------------------"
 
 cdp_aws_cred=${prefix}-cdp-cred-aws
+
+COMMAND="cdp environments create-aws-credential \
+--credential-name ${cdp_aws_cred} \
+--role-arn ${iam_role_arn}  \
+--description "CDP Credential for AWS - ${prefix}"
+
 cdp environments create-aws-credential \
 --credential-name ${cdp_aws_cred} \
 --role-arn ${iam_role_arn}  \
