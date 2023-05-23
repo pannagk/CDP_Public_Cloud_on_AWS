@@ -130,13 +130,13 @@ ParameterKey=prefix,ParameterValue=${prefix} \
 while true
 sleep 10
 do
-    cloud_formation_stack_stasus=$(aws cloudformation describe-stacks --stack-name ${prefix}-cdp-cfn-stack | jq -r '.Stacks[0].StackStatus')
-    echo "$(date): The AWS CloudFormation Stack status:- ${bold}${cloud_formation_stack_stasus}${normal}"
+    cloud_formation_stack_status=$(aws cloudformation describe-stacks --stack-name ${prefix}-cdp-cfn-stack | jq -r '.Stacks[0].StackStatus')
+    echo "$(date): The AWS CloudFormation Stack status:- ${bold}${cloud_formation_stack_status}${normal}"
     printf "\n---------------------------------------------------------------------------------------------\n"
-    if [ "$env_status" = "CREATE_IN_PROGRESS" ]
+    if [ "$cloud_formation_stack_status" = "CREATE_IN_PROGRESS" ]
     then
         sleep 30
-    elif [ "$cloud_formation_stack_stasus" = "CREATE_COMPLETE" ]
+    elif [ "$cloud_formation_stack_status" = "CREATE_COMPLETE" ]
     then
           echo "$(date): The AWS CloudFormation Stack is created."
           break
