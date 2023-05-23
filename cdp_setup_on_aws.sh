@@ -74,6 +74,18 @@ printf "IAM_ROLE_ARN=${iam_role_arn}"
 ##              Configure CDP CLI
 ##---------------------------------------------------
 
+CDP_CLI_PATH=/tmp/${prefix}-cdpclienv
+mkdir ${CDP_CLI_PATH}
+virtualenv ${CDP_CLI_PATH}
+source ${CDP_CLI_PATH}/bin/activate
+${CDP_CLI_PATH}/bin/pip install cdpcli
+${CDP_CLI_PATH}/bin/pip install --upgrade cdpcli
+
+export PATH=$PATH:${CDP_CLI_PATH}/bin
+echo "========================================"
+echo "CDP Version is:-"
+cdp --version
+
 printf "\n---------------------------------------------------------------------------------------------\n"
 echo "Configuring CDP CLI"
 echo "---------------------------------------------------------------------------------------------"
