@@ -1,6 +1,9 @@
 #!/bin/bash
 
-prefix=cdp-pvk-uno
+user=$(whoami)
+
+#Enter a prefix to identify the resources in aws and on cdp. By default it is set to cdp-env-<your username>
+prefix=cdp-env-${user} 
 
 aws_region=ap-south-1
 
