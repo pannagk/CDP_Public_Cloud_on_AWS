@@ -219,10 +219,10 @@ echo "--------------------------------------------------------------------------
 printf "${bold}Setting FreeIPA mappings. \n${normal}"
 echo "---------------------------------------------------------------------------------------------"
 
-datalake_admin_role=cdp-pvk-uno-cdp-env-datalake-admin-role
+datalake_admin_role="${prefix}-datalake-admin-role"
 datalake_admin_role_arn=$(aws iam get-role --role-name ${datalake_admin_role} | jq -r .Role.Arn)
 
-ranger_audit_role=cdp-pvk-uno-cdp-env-ranger-audit-role
+ranger_audit_role="${prefix}-ranger-audit-role"
 ranger_audit_role_arn=$(aws iam get-role --role-name ${ranger_audit_role} | jq -r .Role.Arn)
 
 cdp environments set-id-broker-mappings \
@@ -241,7 +241,7 @@ echo "--------------------------------------------------------------------------
 
 cdp_datalake_name="${cdp_env_name}-datalake"
 
-DataAccessInstanceProfile="${prefix}-cdp-env-data-access-instance-profile"
+DataAccessInstanceProfile="${prefix}-data-access-instance-profile"
 DataAccessInstanceProfile_arn=$(aws iam get-instance-profile --instance-profile-name ${DataAccessInstanceProfile} | jq -r .InstanceProfile.Arn)
 
 storageBucketLocation="s3a://${prefix}-bucket/my-data"
