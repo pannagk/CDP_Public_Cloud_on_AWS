@@ -26,7 +26,14 @@ This document provides all the required information for Cloudera Partners to set
 
 ==== AWS CLI
 
-===== https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html[AWS CLI Installation Steps]
+* https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html[AWS CLI Installation Steps]
+
+* Ensure you have aws cli configured in your PATH. Run the below command to confirm the same. You should get the version details of aws-cli. 
+
+[.shell]
+----
+aws --version
+----
 
 ==== CDP access key and private key
 
@@ -40,26 +47,39 @@ image::profile_1.png[profile1,290,220]
 
 image::gen_access_key.png[access_key,900,200]
 
-* Copy the values of Access Key ID and Secret Key separately. 
+* Copy the values of Access Key ID and Secret Key separately and keep it in a note. 
 
 image::gen_access_key_1.png[access_key1,450,300]
 
 == Configure AWS CLI
 
-* Authenticate to aws with administrator access with aws_access_key_id and aws_secret_access_key. 
+* As part of the configuration, you will enter the aws_access_key_id and aws_secret_access_key for your account/IAM role with *administrator* access. 
 
-* You can refer to the steps mentioned https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html[here]
+* Refer to the steps https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html[here] to create the access key id and secret key. 
 
-WARNING: Please note that this script does not cover the aws authentication part. You will have to do it before running the script.
-
-== Steps to run the script
-
-* Ensure you have aws cli configured in your PATH. Run the below command to confirm the same. You should get the version details of aws-cli. 
+* Once you have these values, run the below command.
 
 [.shell]
 ----
-aws --version
+aws configure
 ----
+
+* It will prompt for the following values. 
+
+** AWS Access Key ID [None]: <Enter the access key id>
+** AWS Secret Access Key [None]: <Enter the secret access key>
+** Default region name [ap-south-1]: <Enter the region>
+** Default output format [None]: json
+
+image::aws_configure.png[aws_configure,280,120]
+
+* After entering these values, you will have two files created in .aws folder in your home directory(~/.aws). They are credentials and config. 
+
+* In the *config* file, you will see a profile created with the region and output format. Make a note of this profile name. It needs to be entered in a parameters file later. 
+
+* You can also modify both credentials and config file and keep a suitable name for the aws profile to be used later. 
+
+== Steps to run the script
 
 * Clone this repository with the below command. 
 [.shell]
