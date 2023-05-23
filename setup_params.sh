@@ -6,8 +6,8 @@ user=$(whoami)
 prefix=cdp-env-${user} 
 
 # AWS Profile Details
-aws_profile_name=cdp-sandbox-env
-aws_region=ap-south-1
+aws_profile_name=AWS_PROFILE_NAME
+aws_region=AWS_REGION_NAME
 
 cdp_runtime="7.2.16"
 
