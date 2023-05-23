@@ -12,6 +12,10 @@ PWD=$(pwd)
 ##                  Create IAM Policy              ##
 ##-------------------------------------------------##
 
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating IAM Policy.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
+
 aws iam create-policy --policy-name ${prefix}-policy --policy-document file://${PWD}/aws_policy.json --description "IAM Policy for CDP Credential" --tags Key=flag,Value=PSE_CLDR
 
 iam_policy_arn=$(aws iam list-policies --query "Policies[?PolicyName == '${prefix}-policy'].Arn"  --output text)
@@ -19,6 +23,10 @@ iam_policy_arn=$(aws iam list-policies --query "Policies[?PolicyName == '${prefi
 ##-------------------------------------------------##
 ##    Create IAM Role and attach the IAM Policy    ##
 ##-------------------------------------------------##
+
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating IAM Role and attaching the previously created policy to this role.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
 
 aws iam create-role --role-name ${prefix}-role \
 --assume-role-policy-document file://${PWD}/aws_role_trusted_entity.json
@@ -46,6 +54,10 @@ cdp configure set cdp_private_key ${cdp_private_key}
 ##    Create CDP AWS Credential                    ##
 ##-------------------------------------------------##
 
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating CDP Credential.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
+
 cdp_aws_cred=${prefix}-cdp-cred-aws
 cdp environments create-aws-credential \
 --credential-name ${cdp_aws_cred} \
@@ -56,7 +68,9 @@ cdp environments create-aws-credential \
 ##    Deploy Cloudformation Template               ##
 ##-------------------------------------------------##
 
-wget https://docs.cloudera.com/cdp-public-cloud/cloud/quickstart-files/cloud-formation-setup.json 
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Deploying the Cloudformation template.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
 
 aws cloudformation create-stack --stack-name ${prefix}-cdp-cfn-stack --template-body file://${PWD}/cloud-formation-setup.json --parameters \
 ParameterKey=BackupLocationBase,ParameterValue=${prefix}-bucket/my-backups \
@@ -86,12 +100,20 @@ done
 ##          Create SSH Key Pair                    ##
 ##-------------------------------------------------##
 
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating SSH Key Pair.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
+
 keyPairName="${prefix}-keyPair"
 aws ec2 create-key-pair --key-name ${keyPairName} --query 'KeyMaterial' --output text > ${keyPairName}.pem
 
 ##-------------------------------------------------##
 ##          Create CDP Environment                 ##
 ##-------------------------------------------------##
+
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating CDP Environment.\n${normal}"
+echo "---------------------------------------------------------------------------------------------"
 
 cdp_env_name="${prefix}-aws-env"
 
@@ -146,6 +168,10 @@ done
 ##              Set Freeipa Mappings to the CDP Env once created
 ##------------------------------------------------------------------------
 
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Setting FreeIPA mappings. \n${normal}"
+echo "---------------------------------------------------------------------------------------------"
+
 datalake_admin_role=cdp-pvk-uno-cdp-env-datalake-admin-role
 datalake_admin_role_arn=$(aws iam get-role --role-name ${datalake_admin_role} | jq -r .Role.Arn)
 
@@ -161,6 +187,10 @@ cdp environments set-id-broker-mappings \
 ##------------------------------------------------------------------------------------------------------
 ##              Create the CDP Data Lake
 ##------------------------------------------------------------------------------------------------------
+
+echo "---------------------------------------------------------------------------------------------"
+printf "${bold}Creating the CDP Data Lake. \n${normal}"
+echo "---------------------------------------------------------------------------------------------"
 
 cdp_datalake_name="${cdp_env_name}-datalake"
 
