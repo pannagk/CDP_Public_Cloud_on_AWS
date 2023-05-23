@@ -10,9 +10,9 @@ normal=$(tput sgr0)
 
 PWD=$(pwd)
 
-echo "${bold}=========================================================="
-echo "----------Welcome to CDP Environment Registration---------"
-echo "${bold}=========================================================="
+echo "${bold}================================================================"
+echo "-------------Welcome to CDP Environment Registration------------"
+echo "${bold}================================================================"
 printf "\n\n"
 
 sleep 3
@@ -255,3 +255,19 @@ cdp datalake create-aws-datalake \
 --scale "LIGHT_DUTY" \
 --runtime "${cdp_runtime}" \
 --no-enable-ranger-raz
+
+
+printf "\n---------------------------------------------------------------------------------------------\n"
+printf "All the steps to register the CDP environment are completed."
+printf "\n---------------------------------------------------------------------------------------------\n\n"
+
+echo "CDP environment :- ${bold}${cdp_env_name}${normal}"
+echo "AWS Cloudformation Stack :- ${bold}${prefix}-cdp-cfn-stack${normal}"
+printf "\n\n"
+echo "${bold}Please head over to the CDP Console and wait for the Datalake to get created completely.${normal}"
+
+printf "\n.............................................................................................\n"
+echo "${bold}------------------------------THANK YOU FOR CHOOSING CLOUDERA--------------------------------"
+echo "${normal}............................................................................................."
+
+printf "\n\n"
