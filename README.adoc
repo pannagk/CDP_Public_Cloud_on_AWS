@@ -50,6 +50,8 @@ image::gen_access_key_1.png[access_key1,450,300]
 
 * You can refer to the steps mentioned https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html[here]
 
+WARNING: Please note that this script does not cover the aws authentication part. You will have to do it before running the script.
+
 == Steps to run the script
 
 * Ensure you have aws cli configured in your PATH. Run the below command to confirm the same. You should get the version details of aws-cli. 
