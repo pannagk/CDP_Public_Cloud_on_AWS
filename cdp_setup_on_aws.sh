@@ -91,12 +91,14 @@ printf "${bold}Creating CDP Credential.\n${normal}"
 echo "---------------------------------------------------------------------------------------------"
 
 cdp_aws_cred=${prefix}-cdp-cred-aws
-cdp_cred_description="CDP Credential for AWS - ${prefix}"
+cdp_cred_description="CDP-Credential-for-AWS-${prefix}"
 
 COMMAND="cdp environments create-aws-credential \
 --credential-name ${cdp_aws_cred} \
 --role-arn ${iam_role_arn}  \
 --description ${cdp_cred_description}"
+
+echo $COMMAND
 
 cdp environments create-aws-credential \
 --credential-name ${cdp_aws_cred} \
