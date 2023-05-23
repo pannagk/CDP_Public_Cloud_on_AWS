@@ -93,7 +93,7 @@ git clone https://github.com/pannagk/CDP_Public_Cloud_on_AWS.git
 [.shell]
 ----
 cd CDP_Public_Cloud_on_AWS
-rm -rf images Readme.adoc
+rm -rf images README.adoc
 chmod +x *.sh
 ----
 
