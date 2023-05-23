@@ -75,7 +75,9 @@ image::aws_configure.png[aws_configure,280,120]
 
 * After entering these values, you will have two files created in .aws folder in your home directory(~/.aws). They are credentials and config. 
 
-* In the *config* file, you will see a profile created with the region and output format. Make a note of this profile name. It needs to be entered in a parameters file later. 
+* In the *config* file, you will see a profile created with the region and output format. (Usually, this profile name is set to *default*.) 
+
+* Make a note of this profile name. It needs to be entered in a parameters file later. 
 
 * You can also modify both credentials and config file and keep a suitable name for the aws profile to be used later. 
 
