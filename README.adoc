@@ -119,3 +119,5 @@ NOTE: You can check the CDP region availability https://docs.cloudera.com/cdp-pu
 ----
 
 * The setup script executes the required steps for creation of CDP Environment in a sequence and you can see the output for each step. You can keep monitoring the logs of the script. If you encounter any error, take the screenshot or copy the error message and share it with the Cloudera POC you are working with. 
+
+* Please note that the script has some wait commands and thus during the execution, you will see no logs being printed occasionally. *Do not end the script abruptly in such cases.*
