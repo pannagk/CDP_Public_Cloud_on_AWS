@@ -112,10 +112,10 @@ vi setup_params.sh
 
 NOTE: You can check the CDP region availability https://docs.cloudera.com/cdp-public-cloud/cloud/requirements-aws/topics/cdp-control-plane-regions.html[here]. 
 
-* Run the script with the below command. 
+* Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo.
 [.shell]
 ----
-./cdp_setup_on_aws.sh
+./cdp_setup_on_aws.sh.x
 ----
 
 * The setup script executes the required steps for creation of CDP Environment in a sequence and you can see the output for each step. You can keep monitoring the logs of the script. If you encounter any error, take the screenshot or copy the error message and share it with the Cloudera POC you are working with. 
