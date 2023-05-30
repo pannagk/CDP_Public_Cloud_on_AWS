@@ -18,6 +18,8 @@ toc::[]
 
 This document provides all the required information for Cloudera Partners to setup a CDP Environment on Public Cloud. In addition to exploring different Data Services that run on containerized environment, this setup can also be used for any solution validation, certification, getting a Hands-on experience, or for any demos with potential customers. Here, you will get all the details for a quick-setup of a CDP environment on CDP Public Cloud with *AWS* as the provider for all the cloud resources. 
 
+NOTE: Please note that this setup currently can only be run on Mac as the setup is done through a shell script. This will soon be dockerized so that you can run it on any platform. 
+
 == Prerequisites
 
 ==== Access to a CDP tenant with PowerUser access
