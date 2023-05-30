@@ -106,12 +106,10 @@ vi setup_params.sh
 ----
 
    1. prefix="Enter a unique value for prefix for identifying resources" (example:- cdp-poc-aws)   
-   2. aws_region="Enter a valid aws region in which CDP is also available"
+   2. aws_region="Enter a valid aws region"
    3. cdp_run_time="Enter CDP Runtime version" (7.2.16 is the latest. You can check with your Cloudera POC to verify this. )
    4. cdp_access_key_id="Enter the CDP access key id here" #This value is generated in the Prerequisites step
    5. cdp_private_key="Enter the CDP private key here" #This value is generated in the Prerequisites step
-
-NOTE: You can check the CDP region availability https://docs.cloudera.com/cdp-public-cloud/cloud/requirements-aws/topics/cdp-control-plane-regions.html[here]. 
 
 * Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo.
 [.shell]
