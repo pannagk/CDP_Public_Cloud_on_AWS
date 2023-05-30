@@ -5,8 +5,9 @@ user=$(whoami)
 #Enter a prefix to identify the resources in aws and on cdp. By default it is set to cdp-env-<your username>
 prefix=cdp-env-${user} 
 
-# AWS Profile Details
-aws_profile_name=AWS_PROFILE_NAME
+##### AWS Profile Details #####
+#Get the profile name and region from this file ~/.aws/config
+aws_profile_name=AWS_PROFILE_NAME 
 aws_region=AWS_REGION_NAME
 
 cdp_runtime="7.2.16"
