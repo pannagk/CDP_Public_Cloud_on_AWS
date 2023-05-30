@@ -4,12 +4,12 @@
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::387553343826:root"
+                "AWS": "arn:aws:iam::<CDP_AWS_SVC_MANAGER_ACCOUNT_ID>:root"
             },
             "Action": "sts:AssumeRole",
             "Condition": {
                 "StringEquals": {
-                    "sts:ExternalId": "414356c1-15dc-476b-a8f8-3101d2995486"
+                    "sts:ExternalId": "<CDP_AWS_EXTERNAL_ID>"
                 }
             }
         }
