@@ -112,9 +112,9 @@ vi setup_params.sh
    5. cdp_private_key="Enter the CDP private key here" #This value is generated in the Prerequisites step
 ---
 
+=== Running the script
 
-
-Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo. 
+* Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo. 
 [.shell]
 ----
 ./cdp_setup_on_aws.sh.x
