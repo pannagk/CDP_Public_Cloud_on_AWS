@@ -110,8 +110,11 @@ vi setup_params.sh
    3. cdp_run_time="Enter CDP Runtime version" (7.2.16 is the latest. You can check with your Cloudera POC to verify this. )
    4. cdp_access_key_id="Enter the CDP access key id here" #This value is generated in the Prerequisites step
    5. cdp_private_key="Enter the CDP private key here" #This value is generated in the Prerequisites step
+---
 
-* Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo.
+
+
+Run the script with the below command. Please note that this is an executable script and the extra x at the end in the script name is not a typo. 
 [.shell]
 ----
 ./cdp_setup_on_aws.sh.x
